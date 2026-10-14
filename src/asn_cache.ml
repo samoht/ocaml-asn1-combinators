@@ -18,6 +18,7 @@ struct
   type t = (k, dyn KV.v) Hashtbl.t
   let create () = Hashtbl.create 7
   let prj_ var d = match prj var d with Some x -> x | _ -> assert false
+  let find t var k = Option.map (KV.mapv (prj_ var)) (Hashtbl.find_opt t (K k))
   let intern t var k v =
     let k = K k in
     try Hashtbl.find t k |> KV.mapv (prj_ var) with Not_found ->

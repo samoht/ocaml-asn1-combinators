@@ -12,3 +12,9 @@
   (name bench)
   (modules bench)
   (libraries asn1-combinators x509 unix))
+
+(test
+  (name domains)
+  (modules domains)
+  (libraries asn1-combinators)
+  (enabled_if (>= %{ocaml_version} 5.0)))

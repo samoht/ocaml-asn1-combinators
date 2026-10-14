@@ -11,5 +11,6 @@ module Make (KV: sig
 end): sig
   type t
   val create : unit -> t
+  val find : t -> 'a var -> 'a KV.k -> 'a KV.v option
   val intern : t -> 'a var -> 'a KV.k -> 'a KV.v -> 'a KV.v
 end

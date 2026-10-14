@@ -209,8 +209,13 @@ module R = struct
     let rec go : type a. ?t:tag -> a asn -> G.t -> a = fun ?t -> function
       | Iso (f, _, _, a) -> f &. go ?t a
       | Fix (fa, var) as fix ->
-          let p = lazy (go ?t (fa fix)) in
-          Cache.intern (fst opt) var fa @@ fun g -> Lazy.force p g
+          ( match Cache.find (fst opt) var fa with
+          | Some p -> p
+          | None ->
+              let body = ref (fun _ -> assert false) in
+              let p = Cache.intern (fst opt) var fa (fun g -> !body g) in
+              body := go ?t (fa fix);
+              p )
       | Sequence s       -> constructed (t @? seq_tag) (c_seq s ~opt)
       | Sequence_of a    -> constructed (t @? seq_tag) (List.map (c_asn a ~opt))
       | Set s            -> constructed (t @? set_tag) (c_set s ~opt)
